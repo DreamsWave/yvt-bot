@@ -1,0 +1,18 @@
+{
+  "name": "yvt-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "vitest",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@yandex-cloud/function-types": "^2.1.0",
+    "vite": "^4.1.4",
+    "vitest": "^0.29.2"
+  }
+}
