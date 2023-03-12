@@ -8,7 +8,7 @@ import chunk from 'chunk-text';
 import { config } from './config';
 import { sqsClient } from './libs';
 import { telegramClient } from './libs';
-import PostTask from './PostTask';
+import Task from './Task';
 
 export type WallWallpostType = WallWallpost & {
   marked_as_ads: number;
@@ -28,7 +28,7 @@ export const defaultReturn = {
   body: 'ok',
 };
 
-export const handler: Handler.Http = async (event, context) => {
+export const handle_vk_cb: Handler.Http = async (event, context) => {
   let vkEvent: VKEvent;
   try {
     vkEvent = JSON.parse(event.body);
@@ -54,7 +54,7 @@ export const handler: Handler.Http = async (event, context) => {
     if (post.marked_as_ads === 1) return defaultReturn;
 
     try {
-      const postTask = await PostTask.get(post.id);
+      const postTask = await Task.get(post.id);
       if (postTask?.ready || postTask?.processing) return defaultReturn;
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -72,7 +72,7 @@ export const handler: Handler.Http = async (event, context) => {
       console.log("Couldn't send YMQ message: ", JSON.stringify(error));
     }
     try {
-      await PostTask.create(post.id);
+      await Task.create(post.id);
     } catch (error) {
       console.log("Couldn't create post task: ", JSON.stringify(error));
     }
@@ -81,7 +81,7 @@ export const handler: Handler.Http = async (event, context) => {
   return defaultReturn;
 };
 
-export const handleWallpostNew: Handler.MessageQueue = async (event, context) => {
+export const handle_wall_post_new: Handler.MessageQueue = async (event, context) => {
   for (const message of event.messages) {
     let post: WallWallpostType;
     try {
@@ -94,7 +94,7 @@ export const handleWallpostNew: Handler.MessageQueue = async (event, context) =>
     }
 
     try {
-      const postTask = await PostTask.get(post.id);
+      const postTask = await Task.get(post.id);
       if (postTask?.ready || postTask?.processing) return;
     } catch (error) {
       console.log(JSON.stringify(error));
@@ -102,12 +102,12 @@ export const handleWallpostNew: Handler.MessageQueue = async (event, context) =>
     }
 
     try {
-      await PostTask.update(post.id, { ready: false, processing: true });
+      await Task.update(post.id, { ready: false, processing: true });
       await forwardPost(post);
-      await PostTask.update(post.id, { ready: true, processing: false });
+      await Task.update(post.id, { ready: true, processing: false });
     } catch (error) {
       console.log(JSON.stringify(error));
-      await PostTask.update(post.id, { ready: false, processing: false });
+      await Task.update(post.id, { ready: false, processing: false });
       throw error;
     }
   }
