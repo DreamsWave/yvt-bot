@@ -2,25 +2,25 @@ import { PutItemCommand, GetItemCommand, UpdateItemCommand } from '@aws-sdk/clie
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamodbClient } from './libs';
 
-interface PostTaskData {
+interface TaskData {
   ready: boolean;
   processing: boolean;
 }
 
-class PostTask {
-  tableName = 'posts_tasks';
-  async get(postId: number | string): Promise<PostTaskData | null> {
+class Task {
+  tableName = 'tasks';
+  async get(postId: number | string): Promise<TaskData | null> {
     try {
       const { Item } = await dynamodbClient.send(
         new GetItemCommand({
           TableName: this.tableName,
           Key: marshall({
-            post_id: String(postId),
+            task_id: String(postId),
           }),
         }),
       );
       if (Item) {
-        return unmarshall(Item) as PostTaskData;
+        return unmarshall(Item) as TaskData;
       }
     } catch (error) {
       console.log(error);
@@ -34,7 +34,7 @@ class PostTask {
         new PutItemCommand({
           TableName: this.tableName,
           Item: marshall({
-            post_id: String(postId),
+            task_id: String(postId),
             ready: false,
             processing: false,
           }),
@@ -48,24 +48,24 @@ class PostTask {
     }
     return false;
   }
-  async update(postId: number | string, postTaskData: PostTaskData): Promise<PostTaskData | null> {
+  async update(postId: number | string, TaskData: TaskData): Promise<TaskData | null> {
     try {
       const { Attributes } = await dynamodbClient.send(
         new UpdateItemCommand({
           TableName: this.tableName,
           Key: marshall({
-            post_id: String(postId),
+            task_id: String(postId),
           }),
           UpdateExpression: 'set ready = :r, processing = :p',
           ExpressionAttributeValues: marshall({
-            ':r': postTaskData.ready,
-            ':p': postTaskData.processing,
+            ':r': TaskData.ready,
+            ':p': TaskData.processing,
           }),
           ReturnValues: 'UPDATED_NEW',
         }),
       );
       if (Attributes) {
-        return unmarshall(Attributes) as PostTaskData;
+        return unmarshall(Attributes) as TaskData;
       }
     } catch (error) {
       console.log(error);
@@ -74,4 +74,4 @@ class PostTask {
   }
 }
 
-export default new PostTask();
+export default new Task();
