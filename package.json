@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "deploy": "tsc && .\\deploy\\deploy-compress.bat\n",
-    "test": "ts-node ./src/ImageCompress.ts",
+    "test": "jest",
     "setup-backet": "ts-node ./setup/setup-backet.ts",
     "lint": "eslint src/**/*.ts",
     "format": "eslint src/**/*.ts --fix",
@@ -16,7 +16,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@jest/globals": "^29.5.0",
     "@types/chunk-text": "^1.0.0",
+    "@types/jest": "^29.4.0",
     "@types/mime-types": "^2.1.1",
     "@types/node": "^18.15.0",
     "@types/node-telegram-bot-api": "^0.61.3",
@@ -28,6 +30,7 @@
     "eslint-config-prettier": "^8.7.0",
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.4",
+    "ts-jest": "^29.0.5",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2",
     "typescript": "^4.9.5"
@@ -38,7 +41,6 @@
     "@aws-sdk/util-dynamodb": "^3.289.0",
     "chunk-text": "^2.0.1",
     "dotenv": "^16.0.3",
-    "got": "^12.6.0",
     "node-telegram-bot-api": "^0.61.0"
   }
 }
