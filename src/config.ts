@@ -1,16 +1,6 @@
 import dotenv from 'dotenv';
 dotenv.config();
-
-type ConfigType = {
-  region: string;
-  ymqEndpoint: string;
-  ymqQueueUrl: string;
-  docApiEndpoint: string;
-  vkCallback: string;
-  vkGroupId: number;
-  tgToken: string;
-  tgChannelId: number;
-};
+import { ConfigType } from './types';
 
 export const config: ConfigType = {
   region: 'ru-central1',
