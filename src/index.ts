@@ -103,3 +103,12 @@ export const handle_wall_post_new: Handler.MessageQueue = async (event, context)
     }
   }
 };
+
+export const clear_tasks = async () => {
+  try {
+    await Task.clearTable();
+  } catch (error) {
+    console.log(JSON.stringify(error));
+  }
+  return defaultReturn;
+};

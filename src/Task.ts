@@ -1,4 +1,11 @@
-import { PutItemCommand, GetItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
+import {
+  PutItemCommand,
+  GetItemCommand,
+  UpdateItemCommand,
+  DeleteItemCommand,
+  CreateTableCommand,
+  DeleteTableCommand,
+} from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamodbClient } from './libs';
 import { TaskType } from './types';
@@ -69,6 +76,76 @@ class Task {
       console.log(error);
     }
     return null;
+  }
+
+  async delete(postId: number | string): Promise<boolean> {
+    try {
+      const response = await dynamodbClient.send(
+        new DeleteItemCommand({
+          TableName: this.tableName,
+          Key: marshall({
+            task_id: String(postId),
+          }),
+        }),
+      );
+      if (response) {
+        return true;
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return false;
+  }
+
+  async createTable(): Promise<boolean> {
+    try {
+      const response = await dynamodbClient.send(
+        new CreateTableCommand({
+          TableName: this.tableName,
+          AttributeDefinitions: [
+            {
+              AttributeName: 'task_id',
+              AttributeType: 'S',
+            },
+          ],
+          KeySchema: [
+            {
+              AttributeName: 'task_id',
+              KeyType: 'HASH',
+            },
+          ],
+        }),
+      );
+      if (response) return true;
+    } catch (error) {
+      console.log(error);
+    }
+    return false;
+  }
+
+  async deleteTable(): Promise<boolean> {
+    try {
+      const response = await dynamodbClient.send(
+        new DeleteTableCommand({
+          TableName: this.tableName,
+        }),
+      );
+      if (response) return true;
+    } catch (error) {
+      console.log(error);
+    }
+    return false;
+  }
+
+  async clearTable(): Promise<boolean> {
+    try {
+      await this.deleteTable();
+      await this.createTable();
+      return true;
+    } catch (error) {
+      console.log(error);
+    }
+    return false;
   }
 }
 
