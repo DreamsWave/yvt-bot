@@ -1,15 +1,12 @@
 import { PutItemCommand, GetItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { marshall, unmarshall } from '@aws-sdk/util-dynamodb';
 import { dynamodbClient } from './libs';
-
-interface TaskData {
-  ready: boolean;
-  processing: boolean;
-}
+import { TaskType } from './types';
 
 class Task {
   tableName = 'tasks';
-  async get(postId: number | string): Promise<TaskData | null> {
+
+  async get(postId: number | string): Promise<TaskType | null> {
     try {
       const { Item } = await dynamodbClient.send(
         new GetItemCommand({
@@ -20,7 +17,7 @@ class Task {
         }),
       );
       if (Item) {
-        return unmarshall(Item) as TaskData;
+        return unmarshall(Item) as TaskType;
       }
     } catch (error) {
       console.log(error);
@@ -35,7 +32,7 @@ class Task {
           TableName: this.tableName,
           Item: marshall({
             task_id: String(postId),
-            ready: false,
+            done: false,
             processing: false,
           }),
         }),
@@ -48,7 +45,8 @@ class Task {
     }
     return false;
   }
-  async update(postId: number | string, TaskData: TaskData): Promise<TaskData | null> {
+
+  async update(postId: number | string, taskData: TaskType): Promise<TaskType | null> {
     try {
       const { Attributes } = await dynamodbClient.send(
         new UpdateItemCommand({
@@ -56,16 +54,16 @@ class Task {
           Key: marshall({
             task_id: String(postId),
           }),
-          UpdateExpression: 'set ready = :r, processing = :p',
+          UpdateExpression: 'set done = :d, processing = :p',
           ExpressionAttributeValues: marshall({
-            ':r': TaskData.ready,
-            ':p': TaskData.processing,
+            ':d': taskData.done,
+            ':p': taskData.processing,
           }),
           ReturnValues: 'UPDATED_NEW',
         }),
       );
       if (Attributes) {
-        return unmarshall(Attributes) as TaskData;
+        return unmarshall(Attributes) as TaskType;
       }
     } catch (error) {
       console.log(error);
