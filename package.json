@@ -4,13 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "tsc",
-    "deploy": "tsc && .\\deploy\\deploy-compress.bat\n",
+    "build": "rimraf ./dist/ && tsc && cp package.json ./dist/",
+    "deploy": "terraform apply",
     "test": "jest",
-    "setup-backet": "ts-node ./setup/setup-backet.ts",
-    "lint": "eslint src/**/*.ts",
-    "format": "eslint src/**/*.ts --fix",
-    "clear-node_modules": "rimraf .\\**\\node_modules"
+    "create-tasks-table": "ts-node ./scripts/createTasksTable.ts",
+    "setup-vars": "./scripts/setup-vars.sh"
   },
   "keywords": [],
   "author": "",

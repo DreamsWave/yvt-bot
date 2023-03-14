@@ -2,3 +2,9 @@ node_modules
 dist
 .env
 coverage
+
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.*
+terraform.tfvars

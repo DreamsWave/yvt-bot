@@ -27,7 +27,7 @@ class Task {
         return unmarshall(Item) as TaskType;
       }
     } catch (error) {
-      console.log(error);
+      console.log(JSON.stringify(error));
     }
     return null;
   }
@@ -48,7 +48,7 @@ class Task {
         return true;
       }
     } catch (error) {
-      console.log(error);
+      console.log(JSON.stringify(error));
     }
     return false;
   }
@@ -73,7 +73,7 @@ class Task {
         return unmarshall(Attributes) as TaskType;
       }
     } catch (error) {
-      console.log(error);
+      console.log(JSON.stringify(error));
     }
     return null;
   }
@@ -92,7 +92,7 @@ class Task {
         return true;
       }
     } catch (error) {
-      console.log(error);
+      console.log(JSON.stringify(error));
     }
     return false;
   }
@@ -118,7 +118,7 @@ class Task {
       );
       if (response) return true;
     } catch (error) {
-      console.log(error);
+      console.log(JSON.stringify(error));
     }
     return false;
   }
@@ -132,7 +132,7 @@ class Task {
       );
       if (response) return true;
     } catch (error) {
-      console.log(error);
+      console.log(JSON.stringify(error));
     }
     return false;
   }
@@ -143,7 +143,7 @@ class Task {
       await this.createTable();
       return true;
     } catch (error) {
-      console.log(error);
+      console.log(JSON.stringify(error));
     }
     return false;
   }
