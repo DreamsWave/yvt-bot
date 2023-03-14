@@ -8,7 +8,7 @@
     "deploy": "terraform apply",
     "test": "jest",
     "create-tasks-table": "ts-node ./scripts/createTasksTable.ts",
-    "setup-vars": "./scripts/setup-vars.sh"
+    "setup-vars": "sh ./scripts/setup-vars.sh"
   },
   "keywords": [],
   "author": "",
