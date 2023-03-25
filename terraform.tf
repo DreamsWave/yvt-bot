@@ -19,32 +19,6 @@ provider "yandex" {
   zone      = var.yc_zone
 }
 
-### Lockbox
-resource "yandex_lockbox_secret" "secret" {
-  name = "secret"
-  folder_id = var.yc_folder_id
-}
-
-resource "yandex_lockbox_secret_version" "version" {
-  secret_id = yandex_lockbox_secret.secret.id
-  entries {
-    key        = "vk_callback"
-    text_value = var.vk_callback
-  }
-  entries {
-    key        = "vk_group_id"
-    text_value = var.vk_group_id
-  }
-  entries {
-    key        = "tg_channel_id"
-    text_value = var.tg_channel_id
-  }
-  entries {
-    key        = "tg_token"
-    text_value = var.tg_token
-  }
-}
-
 ### IAM
 resource "yandex_iam_service_account" "this" {
   name        = var.yc_service_account_name
@@ -108,31 +82,11 @@ resource "yandex_function" "handle-vk-cb" {
     "AWS_ACCESS_KEY_ID"     = yandex_iam_service_account_static_access_key.sa-static-key.access_key
     "AWS_SECRET_ACCESS_KEY" = nonsensitive(yandex_iam_service_account_static_access_key.sa-static-key.secret_key)
     "DOCAPI_ENDPOINT"       = yandex_ydb_database_serverless.db.document_api_endpoint
-    "YMQ_QUEUE_URL"         = yandex_message_queue.ymq.id
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "vk_callback"
-    environment_variable = "VK_CALLBACK"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "vk_group_id"
-    environment_variable = "VK_GROUP_ID"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "tg_token"
-    environment_variable = "TG_TOKEN"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "tg_channel_id"
-    environment_variable = "TG_CHANNEL_ID"
+    "YMQ_QUEUE_URL"         = yandex_message_queue.ymq.id,
+    "VK_CALLBACK"           = var.vk_callback
+    "VK_GROUP_ID"           = var.vk_group_id
+    "TG_TOKEN"              = var.tg_token
+    "TG_CHANNEL_ID"         = var.tg_channel_id
   }
 }
 
@@ -152,31 +106,11 @@ resource "yandex_function" "handle-wall-post-new" {
     "AWS_ACCESS_KEY_ID"     = yandex_iam_service_account_static_access_key.sa-static-key.access_key
     "AWS_SECRET_ACCESS_KEY" = nonsensitive(yandex_iam_service_account_static_access_key.sa-static-key.secret_key)
     "DOCAPI_ENDPOINT"       = yandex_ydb_database_serverless.db.document_api_endpoint
-    "YMQ_QUEUE_URL"         = yandex_message_queue.ymq.id
-  }
-    secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "vk_callback"
-    environment_variable = "VK_CALLBACK"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "vk_group_id"
-    environment_variable = "VK_GROUP_ID"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "tg_token"
-    environment_variable = "TG_TOKEN"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "tg_channel_id"
-    environment_variable = "TG_CHANNEL_ID"
+    "YMQ_QUEUE_URL"         = yandex_message_queue.ymq.id,
+    "VK_CALLBACK"           = var.vk_callback
+    "VK_GROUP_ID"           = var.vk_group_id
+    "TG_TOKEN"              = var.tg_token
+    "TG_CHANNEL_ID"         = var.tg_channel_id
   }
   depends_on = [yandex_message_queue.ymq]
 }
@@ -197,31 +131,11 @@ resource "yandex_function" "clear-tasks" {
     "AWS_ACCESS_KEY_ID"     = yandex_iam_service_account_static_access_key.sa-static-key.access_key
     "AWS_SECRET_ACCESS_KEY" = nonsensitive(yandex_iam_service_account_static_access_key.sa-static-key.secret_key)
     "DOCAPI_ENDPOINT"       = yandex_ydb_database_serverless.db.document_api_endpoint
-    "YMQ_QUEUE_URL"         = yandex_message_queue.ymq.id
-  }
-    secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "vk_callback"
-    environment_variable = "VK_CALLBACK"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "vk_group_id"
-    environment_variable = "VK_GROUP_ID"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "tg_token"
-    environment_variable = "TG_TOKEN"
-  }
-  secrets {
-    id = "${yandex_lockbox_secret.secret.id}"
-    version_id = "${yandex_lockbox_secret_version.version.id}"
-    key = "tg_channel_id"
-    environment_variable = "TG_CHANNEL_ID"
+    "YMQ_QUEUE_URL"         = yandex_message_queue.ymq.id,
+    "VK_CALLBACK"           = var.vk_callback
+    "VK_GROUP_ID"           = var.vk_group_id
+    "TG_TOKEN"              = var.tg_token
+    "TG_CHANNEL_ID"         = var.tg_channel_id
   }
 }
 
